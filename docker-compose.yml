@@ -1,0 +1,30 @@
+version: '3.1'
+services:
+  postgres:
+      container_name: postgres
+      image: postgres:12
+      network_mode: bridge
+      restart: always
+      volumes:
+        - certificatesdb:/var/lib/postgresql/data
+      environment:
+        - POSTGRES_PASSWORD=root
+        - POSTGRES_USER=postgres
+        - POSTGRES_DB=certificatesdb
+  app:
+      container_name: CertExerciseApplication
+      image: springbootapp:latest
+      network_mode: bridge
+      build:
+        context: ./
+        dockerfile: Dockerfile
+      expose:
+        - 8080
+      ports:
+        - 8080:8080
+      depends_on:
+        - postgres
+      links:
+      - postgres
+volumes:
+  certificatesdb:

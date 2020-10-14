@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>CertificatesApp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<!-- CSS only -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script type="text/javascript" th:src="@{/js/entities.js}"></script>
+
+<body style="height: 100vh;">
+	
+	<div th:replace="fragments/navbar :: navbar"></div>
+
+
+	<div class="container">
+		<br>
+		<form th:action="@{/entities/add}" method="post">
+			<div th:if="${errorMessage}">
+				<p class="text-danger" th:text="${errorMessage}"></p>
+			</div>
+			<div class="row">
+			  <div class="col">
+				<input name="name" type="text" class="form-control" placeholder="Name">
+			  </div>
+			  <div class="col">
+				<input name="nif" type="text" class="form-control" placeholder="NIF">
+			  </div>
+			  <div class="col">
+				<input name="countryCode" type="text" class="form-control" placeholder="Country Code">
+			  </div>
+			  <div class="col">
+				<select onchange="onEntityTypeChange()" class="form-control" id="entityType" name="entityType">
+			      <option th:value="'Collective'" th:text="Collective"></option>
+			      <option th:value="'Singular'" th:text="Singular"></option>
+			    </select>
+			  </div>
+			  <div id="companyName">
+			  	<input name="companyName" type="text" class="form-control" placeholder="Company Name">
+			  </div>
+			  
+			  <div class="col">
+				<button class="btn btn-outline-success" type="submit">Add Entity</button>
+			  </div>
+			</div>
+		  </form>
+		  <br>
+		  <hr/>
+		<div class="row justify-content-center pt-5">
+			<div class="col-lg-8 col-md-12">
+				
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th scope="col">Id</th>
+							<th scope="col">Name</th>
+							<th scope="col">NIF</th>
+							<th scope="col">Company Name</th>
+							<th scope="col">Country Code</th>
+							<th scope="col">Type</th>
+						</tr>
+						</thead>
+					
+					<tr th:each="entity : ${entities}">
+						<td th:text="${entity.getId()}">Id</td>
+						<td th:text="${entity.getName()}">Name</td>
+						<td th:text="${entity.getNif()}">NIF</td>
+						<td th:text="${entity.getCompanyName()}">Company Name</td>
+						<td th:text="${entity.getCountryCode()}">Country Code</td>
+						<td th:text="${entity.getEntityType()}">Type</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		
+	</div>
+
+</body>
+</html>
