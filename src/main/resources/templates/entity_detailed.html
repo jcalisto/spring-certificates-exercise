@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>CertificatesApp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<!-- CSS only -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+<body style="height: 100vh;">
+	
+	<div th:replace="fragments/navbar :: navbar"></div>
+
+	<div class="row" th:if="${errorMessage}" id="errorDiv">
+		<h3 th:text="${errorMessage}"></h3>
+	</div>
+	
+	<div th:if="${entity}" class="container" id="entityDetails">
+		<div id="uploadCertificate">
+			<form method="POST" enctype="multipart/form-data" action="/upload-certificate">
+			<table>
+				<tr><td>Certificate to upload:</td><td><input type="file" name="file" /></td></tr>
+				<tr><td></td><td><input type="submit" value="Upload" /></td></tr>
+			</table>
+		</form>
+		</div>
+	
+		<div id="requestedCertificates" class="row justify-content-center pt-5">
+			<div class="col-lg-10 col-md-12">
+				
+				<table class="table table-bordered">
+					<caption style="caption-side: top">Certificates Waiting for Validation, issued by <span th:text="${entity.getName()}">Entity Name</span> (<span th:text="${entity.getEntityType()}">Entity Name</span>)</caption>
+					<thead>
+						<tr>
+							<th scope="col">SubjectDN</th>
+							<th scope="col">SerialNumber</th>
+							<th scope="col">EntityId</th>
+						</tr>
+					</thead>
+					<tr th:each="rCertificate : ${requestedCertificates}">
+						<td th:text="${rCertificate.getSubjectDN()}">SubjectDN</td>
+						<td th:text="${rCertificate.getSerialNumber()}">SerialNumber</td>
+						<td th:text="${rCertificate.getEntity().getId()}">EntityId</td>
+						
+						<td class="text-center">
+							<a th:href="" class="btn btn-primary">Sign Certificate</a>
+						</td>
+					</tr>
+					
+				</table>
+			</div>
+		</div>
+		
+		<div id="signedCertificates" class="row justify-content-center pt-5">
+			<div class="col-lg-10 col-md-12">
+				
+				<table class="table table-bordered">
+					<caption style="caption-side: top">Certificates Signed, issued by <span th:text="${entity.getName()}">Entity Name</span> (<span th:text="${entity.getEntityType()}">Entity Name</span>)</caption>
+					<thead>
+						<tr>
+							<th scope="col">SubjectDN</th>
+							<th scope="col">SerialNumber</th>
+							<th scope="col">EntityId</th>
+						</tr>
+					</thead>
+					<tr th:each="sCertificate : ${signedCertificates}">
+						<td th:text="${sCertificate.getSubjectDN()}">SubjectDN</td>
+						<td th:text="${sCertificate.getSerialNumber()}">SerialNumber</td>
+						<td th:text="${sCertificate.getEntity().getId()}">EntityId</td>
+						
+						<td class="text-center">
+							<a th:href="" class="btn btn-primary">Sign Certificate</a>
+						</td>
+					</tr>
+					
+				</table>
+			</div>
+		</div>
+	</div>
+	
+
+</body>
+</html>

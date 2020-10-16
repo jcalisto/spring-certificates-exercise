@@ -1,6 +1,11 @@
 package com.multicert.CertExercise.dao.models;
 
 import javax.validation.constraints.*;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.*;
 
 @Entity
@@ -19,23 +24,40 @@ public class EntityData {
 	@Pattern(regexp="\\d{9}")
 	private String nif;
 	
+	@Column(name = "company_name")
 	private String companyName;
+	
+	@Column(name = "country_code")
 	private String countryCode;
+	
+	@Column(name = "entity_type")
 	private String entityType;
 	
-	//TODO certificate request list
-	//TODO certificate list
+	@OneToMany(mappedBy="entity", cascade=CascadeType.ALL)
+	private Set<CertificateRequestData> certificate_requests = new HashSet<CertificateRequestData>();
+	
+	@OneToMany(mappedBy="entity", cascade=CascadeType.ALL)
+	private Set<CertificateData> certificates = new HashSet<CertificateData>();
 	
 	public EntityData() {
 		
 	}
 	
-	public EntityData(String name, String nif, String companyName, String countryCode, String entityType) {
+	public EntityData(String name, String nif, String countryCode, String entityType, String companyName) {
 		this.name = name;
 		this.nif = nif;
 		this.companyName = companyName;
 		this.countryCode = countryCode;
 		this.entityType = entityType;
+		System.out.println("Entity constructor: " + name + ", " + nif + " , " + countryCode + " , " + companyName + ", " + entityType);
+	}
+	
+	public Set<CertificateRequestData> getRequestedCertificates(){
+		return Collections.unmodifiableSet(this.certificate_requests);
+	}
+	
+	public Set<CertificateData> getSignedCertificates(){
+		return Collections.unmodifiableSet(this.certificates);
 	}
 	
 	public String getName() {

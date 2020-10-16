@@ -48,7 +48,7 @@
 		  <br>
 		  <hr/>
 		<div class="row justify-content-center pt-5">
-			<div class="col-lg-8 col-md-12">
+			<div class="col-lg-10 col-md-12">
 				
 				<table class="table table-bordered">
 					<thead>
@@ -69,6 +69,9 @@
 						<td th:text="${entity.getCompanyName()}">Company Name</td>
 						<td th:text="${entity.getCountryCode()}">Country Code</td>
 						<td th:text="${entity.getEntityType()}">Type</td>
+						<td class="text-center">
+							<a th:href="@{/entities/{id}/details(id=${entity.getId()})}" class="btn btn-primary">Details</a>
+						</td>
 					</tr>
 				</table>
 			</div>

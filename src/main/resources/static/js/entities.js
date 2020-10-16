@@ -6,7 +6,7 @@ function onEntityTypeChange(){
 
 function updateCompanyNameVisibility(type){
 	let companyNameDiv = document.getElementById('companyName');
-	if(type === 'Collective'){
+	if(type === 'Singular'){
 			companyNameDiv.style.display = 'inline';
 	} else {
 		companyNameDiv.style.display = 'none';

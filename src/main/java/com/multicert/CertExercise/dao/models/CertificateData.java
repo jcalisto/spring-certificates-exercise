@@ -12,7 +12,7 @@ public class CertificateData {
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(name = "certificate_id")
+	@JoinColumn(name = "entity")
 	private EntityData entity;
 	
 	private String subjectDN;

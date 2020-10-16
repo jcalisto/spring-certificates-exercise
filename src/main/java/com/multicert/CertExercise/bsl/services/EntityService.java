@@ -2,10 +2,13 @@ package com.multicert.CertExercise.bsl.services;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.multicert.CertExercise.dao.models.CertificateData;
+import com.multicert.CertExercise.dao.models.CertificateRequestData;
 import com.multicert.CertExercise.dao.models.EntityData;
 import com.multicert.CertExercise.dao.repositories.EntityRepository;
 
@@ -29,6 +32,30 @@ public class EntityService implements IEntityService{
 		EntityData entity = new EntityData(name, nif, countryCode, entityType, companyName);
 		return entityRepository.save(entity);
 	}
+
+
+	@Override
+	public Optional<EntityData> getEntityById(Long id) {
+		return entityRepository.findById(id);
+	}
+
+
+	@Override
+	public List<CertificateRequestData> getReqCertificatesForEntity(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public List<CertificateData> getSignedCertificatesForEntity(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	
+	
 	
 	
 
