@@ -17,8 +17,19 @@ public class CertificateRequestData {
 	
 	private String subjectDN;
 	private String serialNumber;
-	private String certificate;
+	private String csrBase64;
+	
+	public CertificateRequestData() {
 
+	}
+
+	public CertificateRequestData(EntityData entity, String subjectDN, String serialNumber, String csrBase64) {
+		this.entity = entity;
+		this.subjectDN = subjectDN;
+		this.serialNumber = serialNumber;
+		this.csrBase64 = csrBase64;
+	}
+	
 	public Long getId() {
 		return id;
 	}

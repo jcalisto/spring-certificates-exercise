@@ -1,6 +1,8 @@
 package com.multicert.CertExercise.web.controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.multicert.CertExercise.bsl.crypto.CSRObject;
+import com.multicert.CertExercise.bsl.crypto.CSRObject.CSRObjectEnum;
 import com.multicert.CertExercise.bsl.services.IEntityService;
 import com.multicert.CertExercise.dao.models.EntityData;
 
@@ -74,8 +78,17 @@ public class WebEntityController {
 	
 	@PostMapping("/upload-certificate")
 	public String handleFileUpload(@RequestParam("entityId") Long entityId, @RequestParam("file") MultipartFile file) {
-			//TODO
 		
+		try {
+			byte[] fileContent = file.getBytes();
+	        String csrBase64 = Base64.getEncoder().encodeToString(fileContent);
+	        System.out.println("CERTIFICATE: \n" + csrBase64);
+	        CSRObject csr = new CSRObject(csrBase64);
+	        System.out.println("CERTIFICATE FIELD: \n" + csr.get(CSRObjectEnum.COUNTRY));
+		}catch(IOException e) {
+			System.out.print("upload-certificate, read file bytes error: " + e.getMessage());
+		}
+        
 		return "redirect:/entities/" + entityId + "/details";
 	}
 	
