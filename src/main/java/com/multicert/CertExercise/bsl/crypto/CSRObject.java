@@ -13,7 +13,7 @@ import java.math.BigInteger;
 
 public class CSRObject {
 	
-	private final X509CertificateHolder x509crtHolder;
+	private final PKCS10CertificationRequest csr;
 	private final String csrBase64;
 	
 	public CSRObject(final String csrBase64) throws IOException {
@@ -24,19 +24,16 @@ public class CSRObject {
         final Reader pemReader = new StringReader(decodedCsr);
         final PEMParser pemParser = new PEMParser(pemReader);
         
-        x509crtHolder = (X509CertificateHolder) pemParser.readObject();
+        csr = (PKCS10CertificationRequest) pemParser.readObject();
     }
 	
     public String getCsrBase64() {
 		return csrBase64;
 	}
     
-    public String getSerialNumber() {
-    	return this.x509crtHolder.getSerialNumber().toString();
-    }
 
 	public String get(final CSRObjectEnum field) {
-		X500Name x500Name = this.x509crtHolder.getSubject();
+		X500Name x500Name = this.csr.getSubject();
         RDN[] rdnArray = x500Name.getRDNs(new ASN1ObjectIdentifier(field.code));
         String retVal = null;
         for (RDN item : rdnArray) {
@@ -44,6 +41,10 @@ public class CSRObject {
         }
         return retVal;
     }
+	
+	public String getSubjectDN() {
+		return this.csr.getSubject().toString();
+	}
 
     public enum CSRObjectEnum {
         COUNTRY("2.5.4.6"),

@@ -17,6 +17,8 @@ public class CertificateRequestData {
 	
 	private String subjectDN;
 	private String serialNumber;
+	
+	@Column(name = "csrbase64")
 	private String csrBase64;
 	
 	public CertificateRequestData() {
@@ -49,10 +51,10 @@ public class CertificateRequestData {
 		this.serialNumber = serialNumber;
 	}
 	public String getCertificate() {
-		return certificate;
+		return csrBase64;
 	}
 	public void setCertificate(String certificate) {
-		this.certificate = certificate;
+		this.csrBase64 = certificate;
 	}
 	
 	

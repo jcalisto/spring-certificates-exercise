@@ -14,4 +14,5 @@ public interface IEntityService {
 	Optional<EntityData> getEntityById(Long id);
 	List<CertificateRequestData> getReqCertificatesForEntity(Long id); 
 	List<CertificateData> getSignedCertificatesForEntity(Long id); 
+	EntityData addCertificateRequest(Long entityId, String subjectDN, String serialNumber, String csrBase64);
 }

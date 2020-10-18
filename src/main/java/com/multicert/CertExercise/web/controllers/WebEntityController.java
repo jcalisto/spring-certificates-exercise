@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.multicert.CertExercise.bsl.crypto.CSRObject;
 import com.multicert.CertExercise.bsl.crypto.CSRObject.CSRObjectEnum;
 import com.multicert.CertExercise.bsl.services.IEntityService;
+import com.multicert.CertExercise.dao.models.CertificateRequestData;
 import com.multicert.CertExercise.dao.models.EntityData;
 
 @Controller
@@ -82,9 +83,11 @@ public class WebEntityController {
 		try {
 			byte[] fileContent = file.getBytes();
 	        String csrBase64 = Base64.getEncoder().encodeToString(fileContent);
-	        System.out.println("CERTIFICATE: \n" + csrBase64);
 	        CSRObject csr = new CSRObject(csrBase64);
-	        System.out.println("CERTIFICATE FIELD: \n" + csr.get(CSRObjectEnum.COUNTRY));
+	        String subjectDN = csr.getSubjectDN();
+	        String serialNumber = "a3945829aaef10"; //TODO ADD REAL SN
+	        
+	        entityService.addCertificateRequest(entityId, subjectDN, serialNumber, csrBase64);
 		}catch(IOException e) {
 			System.out.print("upload-certificate, read file bytes error: " + e.getMessage());
 		}

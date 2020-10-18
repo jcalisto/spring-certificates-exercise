@@ -34,7 +34,8 @@ public class EntityData {
 	private String entityType;
 	
 	@OneToMany(mappedBy="entity", cascade=CascadeType.ALL)
-	private Set<CertificateRequestData> certificate_requests = new HashSet<CertificateRequestData>();
+	@Column(name = "certificate_requests")
+	private Set<CertificateRequestData> reqCertificates = new HashSet<CertificateRequestData>();
 	
 	@OneToMany(mappedBy="entity", cascade=CascadeType.ALL)
 	private Set<CertificateData> certificates = new HashSet<CertificateData>();
@@ -52,8 +53,12 @@ public class EntityData {
 		System.out.println("Entity constructor: " + name + ", " + nif + " , " + countryCode + " , " + companyName + ", " + entityType);
 	}
 	
+	public void addCertificateRequest(CertificateRequestData crd) {
+		reqCertificates.add(crd);
+	}
+	
 	public Set<CertificateRequestData> getRequestedCertificates(){
-		return Collections.unmodifiableSet(this.certificate_requests);
+		return Collections.unmodifiableSet(this.reqCertificates);
 	}
 	
 	public Set<CertificateData> getSignedCertificates(){

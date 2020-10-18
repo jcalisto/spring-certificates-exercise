@@ -38,6 +38,21 @@ public class EntityService implements IEntityService{
 	public Optional<EntityData> getEntityById(Long id) {
 		return entityRepository.findById(id);
 	}
+	
+	
+
+
+	@Override
+	public EntityData addCertificateRequest(Long entityId, String subjectDN, String serialNumber,
+			String csrBase64) {
+		Optional<EntityData> entity = getEntityById(entityId);
+		if(entity.isPresent()) {
+			CertificateRequestData crd = new CertificateRequestData(entity.get(), subjectDN, serialNumber, csrBase64);
+			entity.get().addCertificateRequest(crd);
+			return entityRepository.save(entity.get());
+		}
+		return null;
+	}
 
 
 	@Override
