@@ -33,11 +33,11 @@ public class EntityData {
 	@Column(name = "entity_type")
 	private String entityType;
 	
-	@OneToMany(mappedBy="entity", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="entity", orphanRemoval = true, cascade=CascadeType.ALL)
 	@Column(name = "certificate_requests")
 	private Set<CertificateRequestData> reqCertificates = new HashSet<CertificateRequestData>();
 	
-	@OneToMany(mappedBy="entity", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="entity", orphanRemoval = true, cascade=CascadeType.ALL)
 	private Set<CertificateData> certificates = new HashSet<CertificateData>();
 	
 	public EntityData() {
@@ -55,6 +55,11 @@ public class EntityData {
 	
 	public void addCertificateRequest(CertificateRequestData crd) {
 		reqCertificates.add(crd);
+	}
+	
+	public void addSignedCertificate(CertificateData certificate) {
+		certificates.add(certificate);
+		System.out.println("Adding certData to entity, new signed certificates size: " + certificates.size());
 	}
 	
 	public Set<CertificateRequestData> getRequestedCertificates(){

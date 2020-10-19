@@ -1,10 +1,15 @@
 package com.multicert.CertExercise.web.controllers;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,8 +24,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.multicert.CertExercise.bsl.crypto.CSRObject;
-import com.multicert.CertExercise.bsl.crypto.CSRObject.CSRObjectEnum;
+import com.multicert.CertExercise.bsl.crypto.CSRSigner;
 import com.multicert.CertExercise.bsl.services.IEntityService;
+import com.multicert.CertExercise.bsl.services.IReqCertificateService;
+import com.multicert.CertExercise.bsl.services.ISignedCertificateService;
+import com.multicert.CertExercise.dao.models.CertificateData;
 import com.multicert.CertExercise.dao.models.CertificateRequestData;
 import com.multicert.CertExercise.dao.models.EntityData;
 
@@ -29,6 +37,11 @@ public class WebEntityController {
 	
 	@Autowired
 	private IEntityService entityService;
+	
+	@Autowired
+	private IReqCertificateService reqCertificateService;
+	
+	@Autowired ISignedCertificateService signedCertificateService;
 	
 	@GetMapping("/")
 	public String index() {
@@ -64,7 +77,7 @@ public class WebEntityController {
 		return "redirect:/entities";
 	}
 	
-	@RequestMapping(value = "/entities/{id}/details", method = RequestMethod.GET)
+	@GetMapping("/entities/{id}/details")
 	public String detailEntity(@PathVariable(value="id") Long id, Model model) {
 		Optional<EntityData> wEntity = entityService.getEntityById(id);
 		if(wEntity.isPresent()) {
@@ -85,8 +98,7 @@ public class WebEntityController {
 	        String csrBase64 = Base64.getEncoder().encodeToString(fileContent);
 	        CSRObject csr = new CSRObject(csrBase64);
 	        String subjectDN = csr.getSubjectDN();
-	        String serialNumber = "a3945829aaef10"; //TODO ADD REAL SN
-	        
+	        String serialNumber = "testSN"; //TODO ADD REAL SN
 	        entityService.addCertificateRequest(entityId, subjectDN, serialNumber, csrBase64);
 		}catch(IOException e) {
 			System.out.print("upload-certificate, read file bytes error: " + e.getMessage());
@@ -95,4 +107,53 @@ public class WebEntityController {
 		return "redirect:/entities/" + entityId + "/details";
 	}
 	
+	@PostMapping("/sign-certificate")
+	public String handleFileUpload(@RequestParam("entityId") Long entityId, @RequestParam("reqCertificateId") Long reqCertificateId) {
+		try {
+			Optional<CertificateRequestData> csr = reqCertificateService.findById(reqCertificateId);
+			if(csr.isPresent()) {
+				CSRObject csrObject = new CSRObject(csr.get().getCertificate());
+				CSRSigner csrSigner = new CSRSigner();
+				X509Certificate certificate = csrSigner.signCertificationRequest(csrObject.getCsr());
+				String certificateBase64 = csrSigner.convertCertificateToPEM(certificate);
+				String subjectDN = certificate.getSubjectX500Principal().getName().toString();
+				String serialNumber = certificate.getSerialNumber().toString();
+				System.out.println("Saving signed certificate");
+				EntityData entity = entityService.addSignedCertificate(entityId, subjectDN, serialNumber, certificateBase64);
+				System.out.println(entity.getName());
+				reqCertificateService.deleteCertificateRequest(entityId);	
+			}
+		}catch(Exception e) {
+			System.out.print("sign-certificate, read file bytes error: " + e.getMessage());
+		}
+        
+		return "redirect:/entities/" + entityId + "/details";
+	}
+	
+	@PostMapping("/download-certificate")
+	public void  downloadCertificate(@RequestParam("entityId") Long entityId, @RequestParam("certificateId") Long certificateId, HttpServletResponse response) {
+		Optional<CertificateData> certificate = signedCertificateService.findById(certificateId);
+		
+		if(!certificate.isPresent()) return;
+		
+		String filename = "signed-certificate.crt";
+		String certificateBase64 = certificate.get().getCertificate();
+		try {
+			OutputStream out = response.getOutputStream();
+			response.setContentType("application/x-x509-user-cert");
+			response.setHeader("Content-Disposition", "signed-certificate.crt");
+			response.setHeader("Access-Control-Expose-Headers","Authorization, Content-Disposition");
+			try (PrintWriter pw = new PrintWriter(response.getOutputStream())) {
+				pw.write(certificateBase64);
+			}
+			out.close();
+					
+		} catch (IOException e) {
+		
+		}
+	 }
+
+	
 }
+
+

@@ -27,7 +27,14 @@ public class CSRObject {
         csr = (PKCS10CertificationRequest) pemParser.readObject();
     }
 	
-    public String getCsrBase64() {
+	
+	
+    public PKCS10CertificationRequest getCsr() {
+		return csr;
+	}
+
+
+	public String getCsrBase64() {
 		return csrBase64;
 	}
     
@@ -48,6 +55,7 @@ public class CSRObject {
 
     public enum CSRObjectEnum {
         COUNTRY("2.5.4.6"),
+        SN("2.5.4.5"),
         STATE("2.5.4.8"),
         LOCALE("2.5.4.7"),
         ORGANIZATION("2.5.4.10"),

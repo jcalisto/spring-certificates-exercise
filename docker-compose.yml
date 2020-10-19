@@ -1,10 +1,14 @@
-version: '3.1'
+version: '2.1'
 services:
   postgres:
       container_name: postgres
       image: postgres:12
-      network_mode: bridge
-      restart: always
+      network_mode: host
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
       volumes:
         - certificatesdb:/var/lib/postgresql/data
       environment:
@@ -14,7 +18,7 @@ services:
   app:
       container_name: CertExerciseApplication
       image: springbootapp:latest
-      network_mode: bridge
+      network_mode: host
       build:
         context: ./
         dockerfile: Dockerfile
@@ -23,8 +27,7 @@ services:
       ports:
         - 8080:8080
       depends_on:
-        - postgres
-      links:
-      - postgres
+        postgres:
+          condition: service_healthy
 volumes:
   certificatesdb:

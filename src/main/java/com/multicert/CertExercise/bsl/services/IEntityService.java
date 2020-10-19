@@ -15,4 +15,5 @@ public interface IEntityService {
 	List<CertificateRequestData> getReqCertificatesForEntity(Long id); 
 	List<CertificateData> getSignedCertificatesForEntity(Long id); 
 	EntityData addCertificateRequest(Long entityId, String subjectDN, String serialNumber, String csrBase64);
+	EntityData addSignedCertificate(Long entityId, String subjectDN, String serialNumber, String certificate);
 }

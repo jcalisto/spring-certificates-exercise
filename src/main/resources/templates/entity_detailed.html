@@ -45,7 +45,13 @@
 						<td th:text="${rCertificate.getEntity().getId()}">EntityId</td>
 						
 						<td class="text-center">
-							<a href="/sign" class="btn btn-primary">Sign Certificate</a>
+							<form th:action="@{/sign-certificate}" method="post">
+							<input type="hidden" name="entityId" th:value="${entity.getId()}" />
+							<input type="hidden" name="reqCertificateId" th:value="${rCertificate.getId()}" />
+							  <div class="col">
+								<button class="btn btn-primary" type="submit">Sign</button>
+							  </div>
+							</form>
 						</td>
 					</tr>
 					
@@ -71,7 +77,13 @@
 						<td th:text="${sCertificate.getEntity().getId()}">EntityId</td>
 						
 						<td class="text-center">
-							<a th:href="" class="btn btn-primary">Sign Certificate</a>
+							<form th:action="@{/download-certificate}" method="post">
+							<input type="hidden" name="entityId" th:value="${entity.getId()}" />
+							<input type="hidden" name="certificateId" th:value="${sCertificate.getId()}" />
+							  <div class="col">
+								<button class="btn btn-primary" type="submit">Download</button>
+							  </div>
+							</form>
 						</td>
 					</tr>
 					

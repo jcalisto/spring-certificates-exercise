@@ -19,6 +19,15 @@ public class CertificateData {
 	private String serialNumber;
 	private String certificate;
 	
+	public CertificateData() {}
+	
+	public CertificateData(EntityData entity, String subjectDN, String serialNumber, String certificate) {
+		this.entity = entity;
+		this.subjectDN = subjectDN;
+		this.serialNumber = serialNumber;
+		this.certificate = certificate;
+	}
+	
 	public Long getId() {
 		return id;
 	}

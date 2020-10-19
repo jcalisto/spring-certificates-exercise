@@ -53,7 +53,21 @@ public class EntityService implements IEntityService{
 		}
 		return null;
 	}
-
+	
+	@Override
+	public EntityData addSignedCertificate(Long entityId, String subjectDN, String serialNumber,
+			String certificate) {
+		Optional<EntityData> entity = getEntityById(entityId);
+		if(entity.isPresent()) {
+			System.out.println("Adding signed certificate to entity");
+			CertificateData crd = new CertificateData(entity.get(), subjectDN, serialNumber, certificate);
+			System.out.println("Creating certData: " + crd.getSubjectDN());
+			entity.get().addSignedCertificate(crd);
+			return entityRepository.save(entity.get());
+		}
+		return null;
+	}
+	
 
 	@Override
 	public List<CertificateRequestData> getReqCertificatesForEntity(Long id) {
