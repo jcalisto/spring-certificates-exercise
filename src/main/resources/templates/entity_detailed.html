@@ -20,7 +20,7 @@
 		<div id="uploadCertificate">
 			<form method="POST" enctype="multipart/form-data" action="/upload-certificate">
 			<table>
-				<tr><td>Certificate to upload:</td><td><input type="file" name="file" /></td></tr>
+				<tr><td>Certificate to upload (.crs):</td><td><input type="file" name="file" /></td></tr>
 				<input type="hidden" name="entityId" th:value="${entity.getId()}" />
 				<tr><td></td><td><input type="submit" value="Upload" /></td></tr>
 			</table>
@@ -77,7 +77,7 @@
 						<td th:text="${sCertificate.getEntity().getId()}">EntityId</td>
 						
 						<td class="text-center">
-							<form th:action="@{/download-certificate}" method="post">
+							<form th:action="@{/download/signed-certificate}" method="post">
 							<input type="hidden" name="entityId" th:value="${entity.getId()}" />
 							<input type="hidden" name="certificateId" th:value="${sCertificate.getId()}" />
 							  <div class="col">

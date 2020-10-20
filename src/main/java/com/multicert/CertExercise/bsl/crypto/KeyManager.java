@@ -6,11 +6,14 @@ import java.security.*;
 import org.bouncycastle.openssl.*;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
 public class KeyManager {
 	private PublicKey publicKey;
 	private PrivateKey privateKey;
+
+	private final String secret = "joao123"; //TODO protect 
 	
 	public KeyManager() {
 		loadKeys();
@@ -30,7 +33,7 @@ public class KeyManager {
 		    PEMEncryptedKeyPair ckp = (PEMEncryptedKeyPair) object;
 		    PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build("joao123".toCharArray());
 		    kp = converter.getKeyPair(ckp.decryptKeyPair(decProv));
-
+		    	
 			// RSA
 			KeyFactory keyFac = KeyFactory.getInstance("RSA");
 			publicKey = kp.getPublic();

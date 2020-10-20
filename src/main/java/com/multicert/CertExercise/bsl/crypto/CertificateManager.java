@@ -8,7 +8,9 @@ import java.io.IOException;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.openssl.PEMParser;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
+
 
 public class CertificateManager {
 	
