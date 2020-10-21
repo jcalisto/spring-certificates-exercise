@@ -7,13 +7,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.File;
-
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Optional;
 
 
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
@@ -46,12 +49,19 @@ public class WebCertificateControllerTest {
 	@MockBean
 	private ICertificateService certificateService;
 	
+	private static File testFile;
+	private static String csrBase64;
+	private static String subjectDN;
+	
+	@BeforeAll
+	public static void initTestCSR() throws IOException {
+		testFile = ResourceUtils.getFile("classpath:testdata/testcsr.csr");
+		csrBase64 = new String(Base64.encodeBase64(Files.readAllBytes(testFile.toPath())), StandardCharsets.US_ASCII);
+		subjectDN = "C=PT,ST=LX,L=LX,O=Mcert,OU=mTr,CN=Joao";
+	}
+	
 	@Test
 	public void whenUploadGoodCertificate_thenRedirectWithoutErrors() throws Exception {
-		
-		File testFile = ResourceUtils.getFile("classpath:testdata/testcsr.csr");
-		String subjectDN = "C=PT,ST=LX,L=LX,O=Mcert,OU=mTr,CN=Joao";
-		
 		MockMultipartFile file = new MockMultipartFile("file", "test.crt", "text/plain", Files.readAllBytes(testFile.toPath()));
 		
 		this.mockMvc.perform(multipart("/upload-certificate")
@@ -77,12 +87,7 @@ public class WebCertificateControllerTest {
 	
 	@Test
 	public void whenSignatureSuccessfull_thenRedirectWithoutErrors () throws Exception {
-		
-		File testFile = ResourceUtils.getFile("classpath:testdata/testcsr.csr");
-		String csrBase64 = new String(Base64.encodeBase64(Files.readAllBytes(testFile.toPath())), StandardCharsets.US_ASCII);
-		
 		EntityData entity = new EntityData("Company A", "100200300", "PT", "Collective", "");
-		String subjectDN = "CN=Joao,OU=mTr,O=Mcert,L=LX,ST=LX,C=PT";
 		CertificateRequestData crd = new CertificateRequestData(entity, subjectDN, "100000001", csrBase64);
 		
 		when(certificateService.findCertificateRequestById(any())).thenReturn(Optional.of(crd));
@@ -93,18 +98,15 @@ public class WebCertificateControllerTest {
 			.andExpect(MockMvcResultMatchers.view().name("redirect:/entities/1/details"))
 			.andExpect(status().isFound());
 		
-		verify(entityService).addSignedCertificate(anyLong(), eq(subjectDN), eq("100000001"), anyString());
+		verify(entityService).addSignedCertificate(anyLong(), anyString(), eq("100000001"), anyString());
 		verify(certificateService).deleteCertificateRequest(anyLong());
 	}
 	
 	@Test
 	public void whenSignatureFails_thenRedirectWithErrors () throws Exception {
-		
-		String csrBase64 = new String("dummy cert".getBytes(), StandardCharsets.US_ASCII);
-		
+		String badCsrBase64 = new String("dummy cert".getBytes(), StandardCharsets.US_ASCII);
 		EntityData entity = new EntityData("Company A", "100200300", "PT", "Collective", "");
-		String subjectDN = "CN=Joao,OU=mTr,O=Mcert,L=LX,ST=LX,C=PT";
-		CertificateRequestData crd = new CertificateRequestData(entity, subjectDN, "100000001", csrBase64);
+		CertificateRequestData crd = new CertificateRequestData(entity, subjectDN, "100000001", badCsrBase64);
 		
 		when(certificateService.findCertificateRequestById(any())).thenReturn(Optional.of(crd));
 		

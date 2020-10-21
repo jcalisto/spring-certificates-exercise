@@ -94,7 +94,7 @@ public class WebCertificateController {
 			out.close();
 					
 		} catch (IOException e) {
-		
+			System.out.print("download-certificate, error: " + e.getMessage());
 		}
 	 }
 }

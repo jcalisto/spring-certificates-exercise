@@ -5,7 +5,7 @@ RUN mvn dependency:go-offline -B
 COPY ./src ./src
 
 # TODO: jollof-* should be replaced with the proper prefix
-RUN mvn package -DskipTests && cp target/CertExercise-0.0.1-SNAPSHOT.war app.war
+RUN mvn package && cp target/CertExercise-0.0.1-SNAPSHOT.war app.war
 
 # Rely on Docker's multi-stage build to get a smaller image based on JRE
 FROM tomcat:latest
